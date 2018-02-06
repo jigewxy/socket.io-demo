@@ -1,37 +1,71 @@
 <!doctype html>
 <html>
-  <head>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+      
     <title>Socket.IO chat</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-    </style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font: 13px Helvetica, Arial; }
+            #chatForm { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+            input#inputBox { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+            button#msgSend { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+            #messages { list-style-type: none; margin: 0; padding: 0; }
+            #messages li { padding: 5px 10px; }
+            #messages li:nth-child(odd) { background: #eee; }
+      </style>
   </head>
   <body>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+    <form id="chatForm">
+      <input id="inputBox" autocomplete="off" /><button id="msgSend">Send</button>
     </form>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-      $(function () {
-        var socket = io();
+ <script>
+ 
+ $(function () {
+
+    var nickname = "";
+    bootbox.prompt({ 
+        size: "small",
+        title: "Please key in a nickname", 
+        callback: function(result){
+            
+            if(result===null)
+                nickname= "guest"+ Date.now().toString().slice(-4);
+            else
+                nickname = result;
+            /* result = String containing user input if OK clicked or null if Cancel clicked */ }
+    })
+
+    var socket = io();
+
+    $('#msgSend').on('click', function(){
         $('form').submit(function(){
-          socket.emit('chat message', $('#m').val());
-          $('#m').val('');
-          return false;
-        });
-        socket.on('chat message', function(msg){
-             $('#messages').append($('<li>').text(msg));
-         });
-      });
-    </script>
+            socket.emit('chat message', nickname.toUpperCase()+" : "+ $('#inputBox').val());
+            $('#inputBox').val('');
+            return false;
+    });
+
+    })
+
+
+    socket.on('chat message', function(msg){
+        console.log(msg);
+        $('#messages').append($('<li>').text(msg));
+    });
+    });
+ </script>
+    <!-- Latest compiled and minified CSS -->
+
+<!-- jQuery library -->
+
+
   </body>
 </html>
