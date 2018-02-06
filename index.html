@@ -42,18 +42,16 @@
             else
                 nickname = result;
             /* result = String containing user input if OK clicked or null if Cancel clicked */ }
-    })
+    });
 
     var socket = io();
 
-    $('#msgSend').on('click', function(){
-        $('form').submit(function(){
+    $('#msgSend').off().on('click', function(){
+            console.log("clicked");
             socket.emit('chat message', nickname.toUpperCase()+" : "+ $('#inputBox').val());
             $('#inputBox').val('');
             return false;
     });
-
-    })
 
 
     socket.on('chat message', function(msg){
